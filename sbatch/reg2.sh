@@ -8,7 +8,7 @@
 #SBATCH --mem=1024
 #SBATCH --output=regress_stdout.txt
 #SBATCH --error=regress_stderr.txt
-#SBATCH --time=15:00:00
+#SBATCH --time=10:00
 #SBATCH --job-name=simulations
 #SBATCH --mail-user=christopher.p.danko-1@ou.edu
 #SBATCH --mail-type=ALL
@@ -16,4 +16,4 @@
 #
 #################################################
 module load R
-Rscript Probit1.R > probout-1.txt
+Rscript Regressions2.R > regout-2.txt

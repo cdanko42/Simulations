@@ -16,4 +16,4 @@
 #
 #################################################
 module load R
-Rscript Probit1.R > probout-1.txt
+Rscript CF2.R > cfout-2.txt

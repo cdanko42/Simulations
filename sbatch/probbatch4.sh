@@ -16,4 +16,4 @@
 #
 #################################################
 module load R
-Rscript Probit1.R > probout-1.txt
+Rscript Probit4.R > out-4.txt
