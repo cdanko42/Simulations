@@ -2,7 +2,7 @@ rm(list = ls())
 
 library(parallel)
 library(doParallel)
-source("DataGen1.R")
+source("DataGen3.R")
 
 library(lmtest)
 library(ivpack)
