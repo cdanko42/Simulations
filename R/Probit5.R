@@ -1,7 +1,5 @@
 rm(list = ls())
 
-library(parallel)
-library(doParallel)
 source("DataGen5.R")
 
 library(lmtest)
@@ -60,12 +58,8 @@ probit <- function(datmat, exo=1, instrument=1){
       probitcf2 <- glm(y_values ~. , family = binomial(link = "probit"), data = cfdata, control=list(epsilon = 1e-8, maxit = 100))
       r6[i, j] <- probitcf2$coefficients[2]
       
-      cl = makeCluster(detectCores())
-      registerDoParallel(cl)
-      clusterExport(cl,list('probitboots','dat', 'instrument', 'exo'),
-                    envir=environment())
-      trials <- seq(1, 500)
-      results <- as.data.frame(parLapply(cl, trials, fun='probitboots'))
+      trials <- seq(1:500)
+      results <- as.data.frame(lapply(trials,'probitboots'))
       cprobit <- sd(results[1,])
       c6[i,j] <- cover(estimate = r6[i,j], se=cprobit)      
     }  
