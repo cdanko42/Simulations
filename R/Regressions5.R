@@ -1,6 +1,6 @@
 rm(list = ls())
 
-source("R/DataGen5.R")
+source("DataGen5.R")
 
 library(lmtest)
 library(ivpack)
