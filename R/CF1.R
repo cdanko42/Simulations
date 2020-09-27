@@ -152,9 +152,9 @@ specreg <- function(datmat, exo=1, instrument=1){
       cfse = cfboots()
       c7[i,j] <- cover(estimate = r7[i,j], se=cfse)      
     }  
-    results[j, 1] <- mean(abs(r6[, j]-0.5))
+    results[j, 1] <- mean(abs(r7[, j]-0.5))
     
-    coverage[j, 1] <- sum(c6[,j])
+    coverage[j, 1] <- sum(c7[,j])
     
   }
   return(list(results =results, coverage=coverage ))  
