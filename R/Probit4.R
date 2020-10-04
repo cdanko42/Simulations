@@ -4,12 +4,14 @@ source("DataGen4.R")
 
 library(lmtest)
 library(ivpack)
+
 probit <- function(datmat, exo=1, instrument=1){
   probitboots <- function(bootsize=599){
     bootse <- c()
+    vse <- c()
     for (p in 1:bootsize){
       rows = sample(1:1000, 1000, replace = TRUE)
-      bootdat <- dat[rows, ]
+      bootdat <- dat2[rows, ]
       booty <- as.matrix(bootdat[, 1], ncol=1, nrow=n)
       bootx <- as.matrix(bootdat[, 2], ncol=1, nrow=n)
       bootxo <- as.matrix(bootdat[, (3+instrument):(2+exo+instrument)], ncol=exo, nrow=n)
@@ -18,8 +20,9 @@ probit <- function(datmat, exo=1, instrument=1){
       bootv = bootcf1$residuals
       bootcf2 <- glm(booty ~ bootx + bootxo + bootv , family = binomial(link = "probit"), control=list(epsilon = 1e-8, maxit = 100))
       bootse[p] <- bootcf2$coefficients[2]
+      vse[p] <- bootcf2$coefficients[4]
     }
-    return(bootse)
+    return(list(bootse =sd(bootse), vse = sd(vse)))
   }
   
   r6 <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat))
@@ -27,6 +30,18 @@ probit <- function(datmat, exo=1, instrument=1){
   
   c6 <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat))
   coverage <- matrix(0, nrow=ncol(datmat), ncol= 1)
+  
+  e6 <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat)) 
+  endo <- matrix(0, nrow=ncol(datmat), ncol = 1)
+  
+  test <- function(s){
+    if (s > 1.96){
+      return(1)
+    }
+    else {
+      return(0)  
+    }
+  }
   
   cover <- function(estimate, se){
     upper <- estimate + 1.96*se
@@ -60,16 +75,21 @@ probit <- function(datmat, exo=1, instrument=1){
       r6[i, j] <- probitcf2$coefficients[2]
       
       cprobit <- probitboots()
-      c6[i,j] <- cover(estimate = r6[i,j], se=cprobit)      
+      c6[i,j] <- cover(estimate = r6[i,j], se=cprobit$bootse)      
+      
+      tstat = probitcf2$coefficients[4]/cprobit$vse  
+      e6[i,j] = test(tstat)
     }  
     results[j, 1] <- mean(abs(r6[, j]-0.5))
     
     coverage[j, 1] <- sum(c6[,j])
     
+    endo[j,] = sum(e6[,j])
   }
-  return(list(results =results, coverage=coverage ))  
+  return(list(results =results, coverage=coverage, endo=endo )) 
 }
 
 mad1 <- probit(datmat=data1)
 mad1$results
 mad1$coverage
+mad1$endo

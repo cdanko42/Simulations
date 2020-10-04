@@ -20,6 +20,17 @@ c4 <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat))
 c5 <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat)) 
 coverage <- matrix(0, nrow=ncol(datmat), ncol= 5)
   
+e5 <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat)) 
+endo <- matrix(0, nrow=ncol(datmat), ncol = 1)
+
+test <- function(s){
+if (s < .05){
+return(1)
+}
+else {
+return(0)  
+}
+}
 for (j in 1:ncol(datmat)){  
 for (i in 1:nrow(datmat)){
 dat= unlist(datmat[i,j])
@@ -69,7 +80,11 @@ r5[i, j] <- ivyval$coefficients[2]
 invisible(iv2se <- robust.se(ivyval)[2,2])
 c5[i,j] <- cover(estimate = r5[i,j], se=iv2se)
 
-
+##Endogeneity 
+firststage <- (lm(x~z+xo))$residuals
+secondstep <- lm(y_values~x+xo +firststage)
+s <- summary(secondstep)$coefficients[4,4]
+e5[i,j] <- test(s=s)
   
 }  
 results[j, 1] <- mean(abs(r1[, j]-0.5))
@@ -83,11 +98,16 @@ coverage[j, 2] <- sum(c2[,j])
 coverage[j, 3] <- sum(c3[,j])  
 coverage[j, 4] <- sum(c4[,j])
 coverage[j, 5] <- sum(c5[,j])  
-  
+
+endo[j,] = sum(e5[,j])
+
 }
-return(list(results =results, coverage=coverage ))  
+return(list(results =results, coverage=coverage, endo=endo ))  
 }
 
+sink("NULL")
 mad1 <- regressions(datmat=data1)
+sink()
 mad1$results
 mad1$coverage
+mad1$endo

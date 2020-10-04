@@ -58,5 +58,5 @@ simulateiv <- function(n=1000, size=1000, rhoxz, rhoxe, eevs= 1, exo =1, instrum
   return(bigdat)
 }
 
-data1 = simulateiv(rhoxz = 0.1, rhoxe = c(.1,.2,0.3,.4,.5))
+data1 = simulateiv(rhoxz = 0.1, rhoxe = c(0,.1,.2,0.3,.4,.5))
 
