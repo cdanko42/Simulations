@@ -8,7 +8,7 @@
 #SBATCH --mem=1024
 #SBATCH --output=regress_stdout.txt
 #SBATCH --error=regress_stderr.txt
-#SBATCH --time=3:00:00
+#SBATCH --time=20:00
 #SBATCH --job-name=simulations
 #SBATCH --mail-user=christopher.p.danko-1@ou.edu
 #SBATCH --mail-type=ALL
@@ -16,4 +16,4 @@
 #
 #################################################
 module load R
-Rscript CF4.R > cfout-4.txt
+Rscript GraphicsGen1-2.R > graphout-1.txt

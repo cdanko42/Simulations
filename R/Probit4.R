@@ -35,7 +35,7 @@ probit <- function(datmat, exo=1, instrument=1){
   endo <- matrix(0, nrow=ncol(datmat), ncol = 1)
   
   test <- function(s){
-    if (s > 1.96){
+    if (abs(s) > 1.96){
       return(1)
     }
     else {
