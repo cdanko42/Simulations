@@ -13,3 +13,6 @@ regout1-5 contains the result from Regressions1-5. cfout1-5 contains the result 
 
 ## Graphics
 GraphicsGen1-2 produces Graph1 and Graph2, found in the graphics folder. GraphicsGen3-4 produces Graph3 and Graph4. 
+
+## Sbatch
+The sbatch folder contains the shell files that permits the files to be run from a Unix console, particularly useful for running the code on supercomputers like the OSCER system at OU. 
