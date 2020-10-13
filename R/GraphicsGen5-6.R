@@ -1,31 +1,29 @@
 rm(list = ls())
+library(ivpack)
+library(ggplot2)
+library(gridExtra)
+setwd("~/Simulations/R")
+data1 <- source("DataGen1.R")
+data2 <- source("DataGen2.R")
+data3 <- source("DataGen3.R")
+data4 <- source("DataGen4.R")
+data5 <- source("DataGen5.R")
+setwd("..")
 
-source("DataGen4.R")
-data1 = simulateiv(size=1050, rhoxz = 0.1, rhoxe = c(.1,.2,0.3,.4,.5))
+data2 <- data2$value
+data3 <- data3$value
+data4 <- data4$value
+data5 <- data5$value
 
-maxlik <- function(datmat, exo=1, instrument=1){
-  
-  n =1000
-  r8 <- matrix(1, nrow=nrow(datmat), ncol= ncol(datmat))
-  results <- matrix(0, nrow=ncol(datmat), ncol= 1)
-  
-  c8 <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat))
-  coverage <- matrix(0, nrow=ncol(datmat), ncol= 1)
-  
-  code <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat))
-  
-  e8 <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat)) 
-  endo <- matrix(0, nrow=ncol(datmat), ncol = 1)
-  
-  cover <- function(estimate, se){
-    upper <- estimate + 1.96*se
-    lower <- estimate - 1.96*se
-    if (.5 > lower & .5 < upper){
-      return(1)}
-    else{
-      return(0)}
-  }
-  
+
+data = as.matrix(data1, ncol=5, nrow=1000)
+data[,2] <- data2[, 4]
+data[,3] <- data3[, 4]
+data[,4] <- data4[,4]
+data[,5] <- data5[,4]
+
+regressions <- function(datmat, exo=1, instrument=1){
+  n = 1000  
   lik=function(theta){
     
     alpha1<-theta[1]
@@ -99,11 +97,37 @@ maxlik <- function(datmat, exo=1, instrument=1){
     return(list(est = sd(bootse), code=max(lol), rhovar= var(bootrho)))
   }
   
+  test <- function(s){
+    if (abs(s) > 1.96){
+      return(0)
+    }
+    else {
+      return(1)  
+    }
+  }
+  
+  yuh = list()
+  plot=list()
+  plot2= list()
+  plots=list()
+  plots2=list()
+  plot3 = list()
+  plot4=list()
+  plots3=list()
+  plots4=list()
+  
+  rhoxe= c(.1,.3,.5,.7,.9)
+  r5 <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat))  
+  c5 <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat)) 
+  se <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat))
+  e5 <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat)) 
+  est5 <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat))
+  t <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat))
   for (j in 1:ncol(datmat)){  
     for (i in 1:nrow(datmat)){
       dat= unlist(datmat[i,j])
       dat = matrix(dat, ncol=5 ,nrow = 1000)
-      n = 1000
+      
       y_values = dat[,1]
       ypre = dat[,2]
       x <- dat[, 3]
@@ -111,6 +135,15 @@ maxlik <- function(datmat, exo=1, instrument=1){
       z <- dat[, (4):(3+instrument)]
       ##Obtain included exogenous regressor
       xo <- dat[, (4+instrument):(3+ instrument+exo)]
+      
+      cover <- function(estimate, se){
+        upper <- estimate + 1.96*se
+        lower <- estimate - 1.96*se
+        if (.5 > lower & .5 < upper){
+          return(1)}
+        else{
+          return(0)}
+      }
       
       dat =as.data.frame(cbind(y_values, x,z,xo))
       
@@ -128,42 +161,76 @@ maxlik <- function(datmat, exo=1, instrument=1){
         convcode<-out$code}, error=function(e){cat("Error:",conditionMessage(e), "\n")})
       
       cfse = maxboots()
-      
-      if (convcode == 1){
-        r8[i, j] <- out$estimate[2]
+
+        r5[i, j] <- out$estimate[2]
         
-        c8[i,j] <- cover(estimate = r8[i,j], se=cfse$est)     
+        c5[i,j] <- cover(estimate = r5[i,j], se=cfse$est)     
         
         rho <- out$estimate[5]
+        se[,j] <- cfse$est
         critval = (rho)^2/cfse$rhovar
-        e8[i,j] <- ifelse(critval > 3.841,1, 0)
-        
-        code[i,j] <- convcode} else{
-        c8[i,j] <- NA
-        e8[i,j] <- NA
-        r8[i, j] <- NA
-      }
-    }  
-    r8 <- r8[which(complete.cases(r8)),]
-    c8 <- c8[which(complete.cases(c8)),]
-    e8 <- e8[which(complete.cases(e8)),]
-    r8 <- r8[1:nrow(r8),]
-    c8 <- c8[1:nrow(c8),]
-    e8 <- e8[1:nrow(e8),]
-    results[j, 1] <- mean(abs(r8[, j]-0.5))
+        t[i,j] <- critval
+        e5[i,j] <- ifelse(critval > 3.841,0, 1)
+      
+    }      
     
-    coverage[j, 1] <- sum(c8[,j])
-    endo[j,1] = sum(e8[,j])
+    yuh[[j]] <- as.data.frame(cbind(abs(r5[,j]-.5), se[,j], e5[,j], abs(t[,j]), r5[,j]))
+    colnames(yuh[[j]])[1:5] <- cbind("AbsoluteDeviation", "StndErr", "Endogeneity",  "TStat", "Beta")
+    
+    rho = "Cor(x, z) ="
+    
+    p3 <- ggplot(yuh[[j]], aes(y=StndErr, x=Beta))+geom_point(aes(color= factor(Endogeneity)), show.legend = ifelse(j==1, TRUE, FALSE))+
+      xlim(min(yuh[[j]]$Beta)-.05,max(yuh[[j]]$Beta)+.05)+
+      ylim(min(yuh[[j]]$StndErr-.005),max(yuh[[j]]$StndErr+.005))+
+      xlab("Beta")+
+      ylab("Standard Error")+ labs(color = "Endogeneity\nTests") +scale_fill_manual(values = c("#4bfffd", "#030057"))+
+      geom_vline(xintercept = .5)+
+      ggtitle(paste(rho, rhoxe[j]))+
+      scale_colour_manual(values = c("0" = "#74BDCB", "1" = "#FFA384"))+theme_bw()
+    
+    plots3[[j]] <- p3
+    
+    p4 <- ggplot(yuh[[j]], aes(x=Beta, y=TStat))+geom_point(aes(color= factor(Endogeneity)),show.legend = FALSE)+
+      xlim(min(yuh[[j]]$Beta)-.05,max(yuh[[j]]$Beta)+.05)+
+      ylim(0,max(yuh[[j]]$TStat + .05))+
+      ylab("Critical Value")+
+      xlab("Beta")+
+      geom_hline(yintercept = 1.96)+
+      ggtitle(paste(rho, rhoxe[j]))+
+      scale_colour_manual(values = c("0" = "#74BDCB", "1" = "#FFA384"))+theme_bw()
+    plots4[[j]] <- p4
     
   }
-  return(list(results =results, coverage=coverage, code =max(code), endo=endo, outersize = nrow(e8) ))  
+  
+  plot3[[1]] <- plots3[[1]]
+  plot3[[2]] <- plots4[[1]]
+  plot3[[3]] <- plots3[[2]]
+  plot3[[4]] <- plots4[[2]]
+  plot3[[5]] <- plots3[[3]]
+  plot3[[6]] <- plots4[[3]]
+  plot4[[1]] <- plots3[[4]]
+  plot4[[2]] <- plots4[[4]]
+  plot4[[3]] <- plots3[[5]]
+  plot4[[4]] <- plots4[[5]]
+  
+  options(bitmapType='cairo')
+  
+  png("Graphics/Graph5.png")
+  grid.arrange(grobs= plot3,
+               widths = c(4,1.65,4),
+               heights= unit(c(1.8,1.8, 1.8), c("in", "in")),
+               top = "Relationship Between Beta and Standard Error",
+               layout_matrix=rbind(c(1,1, 2), c(3,NA, 4), c(5,NA, 6)))
+  dev.off()
+  
+  png("Graphics/Graph6.png")
+  grid.arrange(grobs= plot4,
+               widths = c(4,1.65,4),
+               heights= unit(c(1.8,1.8), c("in", "in")),
+               layout_matrix=rbind(c(1,NA, 2), c(3,NA,4)))
+  dev.off()
 }
 
 sink("NULL")
-mad1 <- maxlik(datmat=data1)
+mad1 <- regressions(datmat=data)
 sink()
-mad1$results
-mad1$coverage
-mad1$code
-mad1$endo
-mad1$outersize

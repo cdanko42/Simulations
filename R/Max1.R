@@ -147,9 +147,9 @@ maxlik <- function(datmat, exo=1, instrument=1){
     r8 <- r8[which(complete.cases(r8)),]
     c8 <- c8[which(complete.cases(c8)),]
     e8 <- e8[which(complete.cases(e8)),]
-    r8 <- r8[1:1000,]
-    c8 <- c8[1:1000,]
-    e8 <- e8[1:1000,]
+    r8 <- r8[1:nrow(r8),]
+    c8 <- c8[1:nrow(c8),]
+    e8 <- e8[1:nrow(e8),]
     results[j, 1] <- mean(abs(r8[, j]-0.5))
     
     coverage[j, 1] <- sum(c8[,j])
