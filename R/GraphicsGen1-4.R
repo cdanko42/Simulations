@@ -4,6 +4,8 @@ library(ggplot2)
 library(gridExtra)
 setwd("~/Simulations/R")
 data1 <- source("DataGen1.R")
+data1 <- data1$value
+data = as.matrix(data1, ncol=5, nrow=1000)
 data2 <- source("DataGen2.R")
 data3 <- source("DataGen3.R")
 data4 <- source("DataGen4.R")
@@ -15,8 +17,6 @@ data3 <- data3$value
 data4 <- data4$value
 data5 <- data5$value
 
-
-data = as.matrix(data1, ncol=5, nrow=1000)
 data[,2] <- data2[, 4]
 data[,3] <- data3[, 4]
 data[,4] <- data4[,4]
@@ -51,6 +51,8 @@ regressions <- function(datmat, exo=1, instrument=1){
   est5 <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat))
   se2 <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat))
   t <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat))
+  coverage <- matrix(0, nrow=ncol(datmat), ncol= 5)
+  
   for (j in 1:ncol(datmat)){  
     for (i in 1:nrow(datmat)){
       dat= unlist(datmat[i,j])
@@ -90,16 +92,37 @@ regressions <- function(datmat, exo=1, instrument=1){
       
     }  
     
-    yuh[[j]] <- as.data.frame(cbind(abs(r5[,j]-.5), se[,j], e5[,j], abs(t[,j]), r5[,j]))
-    colnames(yuh[[j]])[1:5] <- cbind("AbsoluteDeviation", "StndErr", "Endogeneity",  "TStat", "Beta")
+    yuh[[j]] <- as.data.frame(cbind(abs(r5[,j]-.5), se[,j], e5[,j], abs(t[,j]), r5[,j], c5[,j], (r5[,j]-.5)/se[,j], est5[,j]))
+    colnames(yuh[[j]])[1:8] <- cbind("AbsoluteDeviation", "StndErr", "Endogeneity",  "TStat", "Beta", "Coverage", "SDistance", "Rho")
     
     rho = "Cor(x, z) ="
     
-    p3 <- ggplot(yuh[[j]], aes(y=StndErr, x=Beta))+geom_point(aes(color= factor(Endogeneity)), show.legend = ifelse(j==1, TRUE, FALSE))+
-      xlim(min(yuh[[j]]$Beta)-.05,max(yuh[[j]]$Beta)+.05)+
+    p <- ggplot(yuh[[j]], aes(y=StndErr, x=Beta))+geom_point(aes(color= factor(Coverage)), show.legend = ifelse(j==1, TRUE, FALSE))+
+      xlim(min(yuh[[j]]$Beta-.01),max(yuh[[j]]$Beta+.01))+
       ylim(min(yuh[[j]]$StndErr-.005),max(yuh[[j]]$StndErr+.005))+
       xlab("Beta")+
       ylab("Standard Error")+ labs(color = "Endogeneity\nTests") +scale_fill_manual(values = c("#4bfffd", "#030057"))+
+      geom_vline(xintercept = mean(yuh[[j]]$AbsoluteDeviation))+
+      ggtitle(paste(rho, rhoxe[j]))+
+      scale_colour_manual(values = c("0" = "#74BDCB", "1" = "#FFA384"))+theme_bw()
+    
+    plots[[j]] <- p
+    
+    p2 <- ggplot(yuh[[j]], aes(x=Beta, y=SDistance))+geom_point(aes(color= factor(Coverage)),show.legend = FALSE)+
+      xlim(min(yuh[[j]]$Beta-.05),max(yuh[[j]]$Beta+.05))+
+      ylim(min(yuh[[j]]$SDistance - .05),max(yuh[[j]]$SDistance + .05))+
+      ylab("T-Stat")+
+      xlab("Beta")+
+      geom_hline(yintercept = c(1.96, -1.96))+
+      ggtitle(paste(rho, rhoxe[j]))+
+      scale_colour_manual(values = c("0" = "#74BDCB", "1" = "#FFA384"))+theme_bw()
+    plots2[[j]] <- p2
+    
+    p3 <- ggplot(yuh[[j]], aes(y=Rho, x=Beta))+geom_point(aes(color= factor(Endogeneity)), show.legend = ifelse(j==1, TRUE, FALSE))+
+      xlim(min(yuh[[j]]$Beta)-.05,max(yuh[[j]]$Beta)+.05)+
+      ylim(min(yuh[[j]]$Rho-.005),max(yuh[[j]]$Rho+.005))+
+      xlab("Beta")+
+      ylab("Rho")+ labs(color = "Endogeneity\nTests") +scale_fill_manual(values = c("#4bfffd", "#030057"))+
       geom_vline(xintercept = .5)+
       ggtitle(paste(rho, rhoxe[j]))+
       scale_colour_manual(values = c("0" = "#74BDCB", "1" = "#FFA384"))+theme_bw()
@@ -109,14 +132,27 @@ regressions <- function(datmat, exo=1, instrument=1){
     p4 <- ggplot(yuh[[j]], aes(x=Beta, y=TStat))+geom_point(aes(color= factor(Endogeneity)),show.legend = FALSE)+
       xlim(min(yuh[[j]]$Beta)-.05,max(yuh[[j]]$Beta)+.05)+
       ylim(0,max(yuh[[j]]$TStat + .05))+
-      ylab("T-Stat")+
+      ylab("T-Stat on Rho")+
       xlab("Beta")+
       geom_hline(yintercept = 1.96)+
       ggtitle(paste(rho, rhoxe[j]))+
       scale_colour_manual(values = c("0" = "#74BDCB", "1" = "#FFA384"))+theme_bw()
     plots4[[j]] <- p4
     
+    coverage[j, 1] <- sum(c5[,j])   
   }
+  
+  plot[[1]] <- plots[[1]]
+  plot[[2]] <- plots2[[1]]
+  plot[[3]] <- plots[[2]]
+  plot[[4]] <- plots2[[2]]
+  plot[[5]] <- plots[[3]]
+  plot[[6]] <- plots2[[3]]
+  plot2[[1]] <- plots[[4]]
+  plot2[[2]] <- plots2[[4]]
+  plot2[[3]] <- plots[[5]]
+  plot2[[4]] <- plots2[[5]]
+  
   
   plot3[[1]] <- plots3[[1]]
   plot3[[2]] <- plots4[[1]]
@@ -128,10 +164,25 @@ regressions <- function(datmat, exo=1, instrument=1){
   plot4[[2]] <- plots4[[4]]
   plot4[[3]] <- plots3[[5]]
   plot4[[4]] <- plots4[[5]]
-  
-options(bitmapType='cairo')
 
-png("Graphics/Graph1.png")
+  options(bitmapType='cairo')
+  
+  png("Graphics/Graph1.png")
+  grid.arrange(grobs= plot,
+               widths = c(4,1.65,4),
+               heights= unit(c(1.8,1.8, 1.8), c("in", "in")),
+               top = "Relationship Between Bias and Standard Error",
+               layout_matrix=rbind(c(1,1, 2), c(3,NA, 4), c(5,NA, 6)))
+  dev.off()
+  
+  png("Graphics/Graph2.png")
+  grid.arrange(grobs= plot2,
+               widths = c(4,1.65,4),
+               heights= unit(c(1.8,1.8), c("in", "in")),
+               layout_matrix=rbind(c(1,NA, 2), c(3,NA,4)))
+  dev.off()
+  
+  png("Graphics/Graph3.png")
   grid.arrange(grobs= plot3,
                widths = c(4,1.65,4),
                heights= unit(c(1.8,1.8, 1.8), c("in", "in")),
@@ -139,14 +190,16 @@ png("Graphics/Graph1.png")
                layout_matrix=rbind(c(1,1, 2), c(3,NA, 4), c(5,NA, 6)))
   dev.off()
   
-  png("Graphics/Graph2.png")
+  png("Graphics/Graph4.png")
   grid.arrange(grobs= plot4,
                widths = c(4,1.65,4),
                heights= unit(c(1.8,1.8), c("in", "in")),
                layout_matrix=rbind(c(1,NA, 2), c(3,NA,4)))
   dev.off()
+  return(coverage)
 }
 
 sink("NULL")
 mad1 <- regressions(datmat=data)
 sink()
+mad1
