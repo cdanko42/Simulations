@@ -93,3 +93,10 @@ mad1 <- probit(datmat=data1)
 mad1$results
 mad1$coverage
 mad1$endo
+setwd("..")
+bias <- mad1$results
+coverage <- mad1$coverage
+endogeneity <- mad1$endo
+write.csv(bias, "Data/bias9.csv")
+write.csv(coverage, "Data/coverage9.csv")
+write.csv(endogeneity, "Data/endo9.csv")

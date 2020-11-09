@@ -59,4 +59,3 @@ simulateiv <- function(n=1000, size=1000, rhoxz, rhoxe, eevs= 1, exo =1, instrum
 }
 
 data1 = simulateiv(rhoxz = 0.9, rhoxe = c(0,.1,.2,0.3,.4,.5))
-

@@ -145,3 +145,10 @@ mad1$results
 mad1$coverage
 mad1$code
 mad1$endo
+setwd("..")
+bias <- mad1$results
+coverage <- mad1$coverage
+endogeneity <- mad1$endo
+write.csv(bias, "Data/bias12.csv")
+write.csv(coverage, "Data/coverage12.csv")
+write.csv(endogeneity, "Data/endo12.csv")

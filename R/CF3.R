@@ -163,3 +163,8 @@ specreg <- function(datmat, exo=1, instrument=1){
 mad1 <- specreg(datmat=data1)
 mad1$results
 mad1$coverage
+setwd("..")
+bias <- mad1$results
+coverage <- mad1$coverage
+write.csv(bias, "Data/bias18.csv")
+write.csv(coverage, "Data/coverage18.csv")

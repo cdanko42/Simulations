@@ -1,12 +1,27 @@
 rm(list = ls())
-
-source("DataGen3.R")
-library(ks)
-library(lmtest)
 library(ivpack)
 library(ggplot2)
 library(gridExtra)
+library(ks)
+setwd("~/Simulations/R")
+data1 <- source("DataGen1.R")
+data1 <- data1$value
+data = as.matrix(data1, ncol=5, nrow=1000)
+data2 <- source("DataGen2.R")
+data3 <- source("DataGen3.R")
+data4 <- source("DataGen4.R")
+data5 <- source("DataGen5.R")
+setwd("..")
 
+data2 <- data2$value
+data3 <- data3$value
+data4 <- data4$value
+data5 <- data5$value
+
+data[,2] <- data2[, 4]
+data[,3] <- data3[, 4]
+data[,4] <- data4[,4]
+data[,5] <- data5[,4]
 
 specreg <- function(datmat, exo=1, instrument=1){
   cfboots <- function(bootsize=599, eevs= 1, exo=1, instrument=1){
@@ -23,9 +38,9 @@ specreg <- function(datmat, exo=1, instrument=1){
       demeanbootxo <- bootdat$demeanbootxo
       
       ##Obtain residuals, which are our U_i
-      specialregdata = as.data.frame(cbind(demeanbootxo, bootx, bootz))
+      specialregdataboot = as.data.frame(cbind(demeanbootxo, bootx, bootz))
       if (exo > 1){
-        specialregdata = cbind(specialregdata, bootxo[, 2:exo])
+        specialregdataboot = cbind(specialregdata, bootxo[, 2:exo])
       }
       
       fssr <- lm(demeanbootxo ~., data=specialregdata)
@@ -33,7 +48,6 @@ specreg <- function(datmat, exo=1, instrument=1){
       
       ##Step 2
       fhat <- kde(bootdat$u,eval.points=bootdat$u)$estimate
-      
       
       ##Step 3
       ## Create vector that will collect our I(Vi > 0)
@@ -48,25 +62,25 @@ specreg <- function(datmat, exo=1, instrument=1){
       lower = .025*n + 1
       upper = .975*n
       
-      sortdat <- dat[order(dat$t),]
-      trimdat <- sortdat[lower:upper,]
-      firststagespec <- trimdat[, (3):(2 + instrument + exo)]
-      firststagespec <- firststagespec[, -(instrument +1)]
-      firststagespec <- as.data.frame(cbind(firststagespec, trimdat$x))
-      colnames(firststagespec)[instrument + exo ] = "x"
+      sortdatboot <- bootdat[order(bootdat$t),]
+      trimdatboot <- sortdatboot[lower:upper,]
+      firststagespecboot <- trimdatboot[, (3):(2 + instrument + exo)]
+      firststagespecboot <- firststagespecboot[, -(instrument +1)]
+      firststagespecboot <- as.data.frame(cbind(firststagespecboot, trimdat$x))
+      colnames(firststagespecboot)[instrument + exo ] = "x"
       
       ## Step 4
       ##Conduct 2SLS
-      specialreg <- lm(x~., data=firststagespec)
-      specHat <- specialreg$residuals
+      specialregboot <- lm(x~., data=firststagespecboot)
+      specHatboot <- specialregboot$residuals
       ## Estimate beta
       
-      secondstagespec <- trimdat[, (3):(2 + instrument + exo)]
-      firststagespec$t <- trimdat$t
-      firststagespec$specHat  <- specHat
-      specialreg2 <- lm(t~x+specHat, data=firststagespec)
-      bootse[p] <- specialreg2$coefficients[2]
-      bootse2[p] <- specialreg2$coefficients[3]
+      secondstagespecboot <- trimdatboot[, (3):(2 + instrument + exo)]
+      firststagespecboot$t <- trimdatboot$t
+      firststagespecboot$specHat  <- specHat
+      specialreg2boot <- lm(t~x+specHat, data=firststagespecboot)
+      bootse[p] <- specialreg2boot$coefficients[2]
+      bootse2[p] <- specialreg2boot$coefficients[3]
     }
     return(list(se= sd(bootse), se2  = sd(bootse2)))
   }
@@ -99,7 +113,7 @@ specreg <- function(datmat, exo=1, instrument=1){
       return(0)  
     }
   }
-
+  
   yuh = list()
   plot=list()
   plot2= list()
@@ -180,8 +194,9 @@ specreg <- function(datmat, exo=1, instrument=1){
       c7[i,j] <- cover(estimate = r7[i,j], se=cfse$se)
       se[i,j] <- cfse$se
       se2[i,j] <- cfse$se2 
+      est7[i,j] <- specialreg2$coefficients[3]
       
-      tstat = specialreg2$coefficients[3]/cfse$se2  
+      tstat = est7[i,j]/cfse$se2  
       t[i,j] <- tstat
       e7[i,j] = test(tstat)
     }  
@@ -238,7 +253,7 @@ specreg <- function(datmat, exo=1, instrument=1){
                layout_matrix=rbind(c(1,1, 2), c(3,NA, 4), c(5,NA, 6)))
   dev.off()
   
-  png("Graphics/Graph6.png")
+  png("Graphics/Graph16.png")
   grid.arrange(grobs= plot4,
                widths = c(4,1.65,4),
                heights= unit(c(1.8,1.8), c("in", "in")),
@@ -246,10 +261,10 @@ specreg <- function(datmat, exo=1, instrument=1){
   dev.off()
   
   return(list(results =results, coverage=coverage, endogeneity=endogeneity ))  
+  
+}
 
-  }
-
-mad1 <- specreg(datmat=data1)
+mad1 <- specreg(datmat=data)
 mad1$results
 mad1$coverage
 mad1$endogeneity

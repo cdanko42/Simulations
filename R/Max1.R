@@ -1,12 +1,11 @@
 rm(list = ls())
 
 source("DataGen1.R")
-data1 = simulateiv(size=1050, rhoxz = 0.1, rhoxe = c(.1,.2,0.3,.4,.5))
 
 maxlik <- function(datmat, exo=1, instrument=1){
   
   n =1000
-  r8 <- matrix(1, nrow=nrow(datmat), ncol= ncol(datmat))
+  r8 <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat))
   results <- matrix(0, nrow=ncol(datmat), ncol= 1)
   
   c8 <- matrix(0, nrow=nrow(datmat), ncol= ncol(datmat))
@@ -127,36 +126,26 @@ maxlik <- function(datmat, exo=1, instrument=1){
         estgrad<-out$gradient
         convcode<-out$code}, error=function(e){cat("Error:",conditionMessage(e), "\n")})
       
-      cfse = maxboots()
+      r8[i, j] <- out$estimate[2] 
       
-      if (convcode == 1){
-        r8[i, j] <- out$estimate[2]
-        
-        c8[i,j] <- cover(estimate = r8[i,j], se=cfse$est)     
-        
-        rho <- out$estimate[5]
-        critval = (rho)^2/cfse$rhovar
-        e8[i,j] <- ifelse(critval > 3.841,1, 0)
-        
-        code[i,j] <- convcode} else{
-        c8[i,j] <- NA
-        e8[i,j] <- NA
-        r8[i, j] <- NA
-      }
-    }  
-    r8 <- r8[which(complete.cases(r8)),]
-    c8 <- c8[which(complete.cases(c8)),]
-    e8 <- e8[which(complete.cases(e8)),]
-    r8 <- r8[1:nrow(r8),]
-    c8 <- c8[1:nrow(c8),]
-    e8 <- e8[1:nrow(e8),]
+      
+      
+      cfse = maxboots()
+      c8[i,j] <- cover(estimate = r8[i,j], se=cfse$est)     
+      
+      rho <- out$estimate[5]
+      critval = (rho)^2/cfse$rhovar
+      e8[i,j] <- ifelse(critval > 3.841,1, 0)
+    
+      code[i,j] <- max(convcode, cfse$code)
+      }  
     results[j, 1] <- mean(abs(r8[, j]-0.5))
     
     coverage[j, 1] <- sum(c8[,j])
-    endo[j,1] = sum(e8[,j])
+    endo[j,] = sum(e8[,j])
     
   }
-  return(list(results =results, coverage=coverage, code =max(code), endo=endo, outersize = nrow(e8) ))  
+  return(list(results =results, coverage=coverage, code =max(code), endo=endo))  
 }
 
 sink("NULL")
@@ -166,4 +155,10 @@ mad1$results
 mad1$coverage
 mad1$code
 mad1$endo
-mad1$outersize
+setwd("..")
+bias <- mad1$results
+coverage <- mad1$coverage
+endogeneity <- mad1$endo
+write.csv(bias, "Data/bias11.csv")
+write.csv(coverage, "Data/coverage11.csv")
+write.csv(endogeneity, "Data/endo11.csv")

@@ -1,0 +1,49 @@
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+           [,1]
+[1,] 0.05945108
+[2,] 0.06188720
+[3,] 0.06732944
+[4,] 0.08164028
+[5,] 0.11610867
+[6,] 0.19788160
+     [,1]
+[1,]  917
+[2,]  897
+[3,]  888
+[4,]  795
+[5,]  615
+[6,]  280
+[1] 1
+     [,1]
+[1,]   22
+[2,]  343
+[3,]  921
+[4,]  999
+[5,] 1000
+[6,] 1000
+[1] 1000

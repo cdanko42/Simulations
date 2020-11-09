@@ -1,7 +1,6 @@
 rm(list = ls())
 
 source("DataGen4.R")
-data1 = simulateiv(size=1050, rhoxz = 0.1, rhoxe = c(.1,.2,0.3,.4,.5))
 
 maxlik <- function(datmat, exo=1, instrument=1){
   
@@ -167,3 +166,10 @@ mad1$coverage
 mad1$code
 mad1$endo
 mad1$outersize
+setwd("..")
+bias <- mad1$results
+coverage <- mad1$coverage
+endogeneity <- mad1$endo
+write.csv(bias, "Data/bias14.csv")
+write.csv(coverage, "Data/coverage14.csv")
+write.csv(endogeneity, "Data/endo14.csv")

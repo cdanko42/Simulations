@@ -1,12 +1,26 @@
-          [,1]
-[1,] 0.1329600
-[2,] 0.1323723
-[3,] 0.1381255
-[4,] 0.1410728
-[5,] 0.1452396
-     [,1]
-[1,]  876
-[2,]  864
-[3,]  860
-[4,]  854
-[5,]  847
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 

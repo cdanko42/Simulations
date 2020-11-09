@@ -1,10 +1,36 @@
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
            [,1]       [,2]      [,3]       [,4]      [,5]
 [1,] 0.02564474 0.03633926 0.3816795 0.04406743 0.3820589
 [2,] 0.09809000 0.03827758 0.3591879 0.10740901 0.3822724
 [3,] 0.20002838 0.03675308 0.3372777 0.22085381 0.3839071
 [4,] 0.29945302 0.03569170 0.3160587 0.34706175 0.3854182
 [5,] 0.40018432 0.03522061 0.2955525 0.48774176 0.3873181
-[6,] 0.49850116 0.03518573 0.2757681 0.65727489 0.3889189
+[6,] 0.49828688 0.03534839 0.2758684 0.65615669 0.3889760
      [,1] [,2] [,3] [,4] [,5]
 [1,]  948  940    0  953    0
 [2,]  123  936    0  526    0

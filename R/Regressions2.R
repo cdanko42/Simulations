@@ -111,3 +111,15 @@ sink()
 mad1$results
 mad1$coverage
 mad1$endo
+setwd("..")
+bias <- mad1$results[, 5]
+coverage <- mad1$coverage[,5]
+endogeneity <- mad1$endo
+write.csv(bias, "Data/bias2.csv")
+write.csv(coverage, "Data/coverage2.csv")
+write.csv(endogeneity, "Data/endo2.csv")
+
+auxbias <- mad1$results[, 1:4]
+auxcoverage <- mad1$coverage[,1:4]
+write.csv(auxcoverage, "Data/auxbias2.csv")
+write.csv(auxbias, "Data/auxcoverage2.csv")
