@@ -83,7 +83,8 @@ tab_row_group(
   tab_row_group(
     group = "Corr(x, µ) =.1",
     rows = 21:25
-  )
+  ) %>%
+  tab_options(table.width= pct(100))
 
-gtsave(gtable, "Graphics/Table1.png")
+gtsave(gtable, "Graphics/Table1.pdf")
 
