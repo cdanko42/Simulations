@@ -19,7 +19,7 @@ bias15 <- read.csv("Data/bias15.csv")[,2]
 bias16 <- read.csv("Data/bias16.csv")[,2]
 bias17 <- read.csv("Data/bias17.csv")[,2]
 bias18 <- read.csv("Data/bias18.csv")[,2]
-bias19 <- c(0,0,0,0,0,0)
+bias19 <- read.csv("Data/bias19.csv")[,2]
 bias20 <- read.csv("Data/bias20.csv")[,2]
 
 
@@ -47,7 +47,7 @@ for (i in 2:6){
   biastable[(6-i)*5+5,4] <- bias20[i]
 }
 
-colnames(biastable) <- c("2SLPM", "Control Function", "MLE", "Special Regressor")
+colnames(biastable) <- c("2SLPM", "Control Function", "Maximum Likelihood", "Special Regressor")
 biastable$names <- 1
 
 biastable$names[1:5] <- c("Corr(x, z) = .1", "Corr(x, z) = .3", "Corr(x, z) = .5", "Corr(x, z) = .7", "Corr(x, z) = .9"  )
@@ -58,11 +58,14 @@ biastable$names[21:25] <- c("Corr(x, z) = .1", "Corr(x, z) = .3", "Corr(x, z) = 
 
 biastable <- biastable[1:25,]
 biastable[, 1:4] <- round(biastable[, 1:4], digits=4)
+biastable[, 1:4] <- format(biastable[,1:4], scientific=F)
+biastable[5, 2] <- NA
+
 
 gtable <- biastable %>%
   gt(rowname_col= "names") %>%
   tab_header(
-    title = "Summary of Binomial Tests"
+    title = "Mean Absolute Deviation for Simulation Estimates"
   ) %>%
 tab_row_group(
   group = "Corr(x, µ) =.5",
@@ -84,7 +87,8 @@ tab_row_group(
     group = "Corr(x, µ) =.1",
     rows = 21:25
   ) %>%
-  tab_options(table.width= pct(100))
+  tab_options(table.width= pct(66.7))
 
 gtsave(gtable, "Graphics/Table1.pdf")
 
+as_latex(gtable)

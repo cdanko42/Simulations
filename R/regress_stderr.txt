@@ -15,3 +15,6 @@ but cannot be loaded as requested: "GCCcore/4.9.3"
 Warning messages:
 1: In min(rows_matched) : no non-missing arguments to min; returning Inf
 2: In max(rows_matched) : no non-missing arguments to max; returning -Inf
+Warning messages:
+1: In min(rows_matched) : no non-missing arguments to min; returning Inf
+2: In max(rows_matched) : no non-missing arguments to max; returning -Inf
