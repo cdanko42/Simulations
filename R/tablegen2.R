@@ -19,7 +19,7 @@ coverage15 <- read.csv("Data/coverage15.csv")[,2]
 coverage16 <- read.csv("Data/coverage16.csv")[,2]
 coverage17 <- read.csv("Data/coverage17.csv")[,2]
 coverage18 <- read.csv("Data/coverage18.csv")[,2]
-coverage19 <- read.csv("Data/coverage18.csv")[,2]
+coverage19 <- read.csv("Data/coverage19.csv")[,2]
 coverage20 <- read.csv("Data/coverage20.csv")[,2]
 
 
