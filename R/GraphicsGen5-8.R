@@ -115,6 +115,9 @@ regressions <- function(datmat, exo=1, instrument=1){
     yuh[[j]] <- as.data.frame(cbind(abs(r5[,j]-.5), se[,j], e5[,j], abs(t[,j]), r5[,j], c5[,j], (r5[,j]-.5)/se[,j], est5[,j]))
     colnames(yuh[[j]])[1:8] <- cbind("AbsoluteDeviation", "StndErr", "Endogeneity",  "TStat", "Beta", "Coverage", "SDistance", "Rho")
     
+    yuh[[j]]$Endogeneity[which(yuh[[j]]$Endogeneity == 1)] <- "Fail to Reject"
+    yuh[[j]]$Endogeneity[which(yuh[[j]]$Endogeneity == 0)] <- "Reject"
+
     rho = "Cor(x, z) ="
     
     p <- ggplot(yuh[[j]], aes(y=StndErr, x=Beta))+geom_point(aes(color= factor(Coverage)), show.legend = ifelse(j==1, TRUE, FALSE))+
@@ -139,24 +142,24 @@ regressions <- function(datmat, exo=1, instrument=1){
     plots2[[j]] <- p2
     
     p3 <- ggplot(yuh[[j]], aes(y=Rho, x=Beta))+geom_point(aes(color= factor(Endogeneity)), show.legend = ifelse(j==1, TRUE, FALSE))+
-      xlim(min(yuh[[j]]$Beta)-.05,max(yuh[[j]]$Beta)+.05)+
-      ylim(min(yuh[[j]]$Rho-.005),max(yuh[[j]]$Rho+.005))+
+      xlim(-3,3)+
+      ylim(-3,3.5)+
       xlab("Beta")+
       ylab("Rho")+ labs(color = "Endogeneity\nTests") +scale_fill_manual(values = c("#4bfffd", "#030057"))+
       geom_vline(xintercept = .5)+
       ggtitle(paste(rho, rhoxe[j]))+
-      scale_colour_manual(values = c("0" = "#74BDCB", "1" = "#FFA384"))+theme_bw()
+      scale_colour_manual(values = c("Reject" = "#74BDCB", "Fail to Reject" = "#FFA384"))+theme_bw()
     
     plots3[[j]] <- p3
     
     p4 <- ggplot(yuh[[j]], aes(x=Beta, y=TStat))+geom_point(aes(color= factor(Endogeneity)),show.legend = FALSE)+
-      xlim(min(yuh[[j]]$Beta)-.05,max(yuh[[j]]$Beta)+.05)+
-      ylim(0,max(yuh[[j]]$TStat + .05))+
+      xlim(-3,3)+
+      ylim(0,12)+
       ylab("T-Stat on Rho")+
       xlab("Beta")+
       geom_hline(yintercept = 1.96)+
       ggtitle(paste(rho, rhoxe[j]))+
-      scale_colour_manual(values = c("0" = "#74BDCB", "1" = "#FFA384"))+theme_bw()
+      scale_colour_manual(values = c("Reject" = "#74BDCB", "Fail to Reject" = "#FFA384"))+theme_bw()
     plots4[[j]] <- p4
     
   }
@@ -215,7 +218,7 @@ regressions <- function(datmat, exo=1, instrument=1){
   grid.arrange(grobs= plot3,
                widths = c(4,1.65,4),
                heights= unit(c(1.8,1.8, 1.8), c("in", "in")),
-               top = "Relationship Between Beta and Standard Error",
+               top = "Relationship Between Beta and Rho",
                layout_matrix=rbind(c(1,1, 2), c(3,NA, 4), c(5,NA, 6)))
   dev.off()
   

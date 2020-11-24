@@ -1,0 +1,26 @@
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 
+Error: non-finite value supplied by 'nlm' 
+Error: object 'out' not found 

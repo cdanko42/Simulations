@@ -24,17 +24,3 @@ Error: non-finite value supplied by 'nlm'
 Error: object 'out' not found 
 Error: non-finite value supplied by 'nlm' 
 Error: object 'out' not found 
-          [,1]
-[1,] 0.1373668
-[2,] 0.1339797
-[3,] 0.1367201
-[4,] 0.1378133
-[5,] 0.1423857
-[6,] 0.1370168
-     [,1]
-[1,]  859
-[2,]  870
-[3,]  864
-[4,]  865
-[5,]  857
-[6,]  868
