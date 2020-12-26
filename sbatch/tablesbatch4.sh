@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#SBATCH --partition=normal
+#SBATCH --partition=debug
 #SBATCH --exclusive
 #SBATCH --ntasks=40
 #SBATCH --nodes=2
@@ -8,12 +8,12 @@
 #SBATCH --mem=1024
 #SBATCH --output=regress_stdout.txt
 #SBATCH --error=regress_stderr.txt
-#SBATCH --time=15:00:00
-#SBATCH --job-name=specreg2
+#SBATCH --time=5:00
+#SBATCH --job-name=table4
 #SBATCH --mail-user=christopher.p.danko-1@ou.edu
 #SBATCH --mail-type=ALL
 #SBATCH --chdir=/home/danko/Simulations/R
 #
 #################################################
 module load R
-Rscript CF2.R > cfout-2.txt
+Rscript tablegen4.R > table4.txt

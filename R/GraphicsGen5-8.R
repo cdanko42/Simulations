@@ -118,7 +118,7 @@ regressions <- function(datmat, exo=1, instrument=1){
     yuh[[j]]$Endogeneity[which(yuh[[j]]$Endogeneity == 1)] <- "Fail to Reject"
     yuh[[j]]$Endogeneity[which(yuh[[j]]$Endogeneity == 0)] <- "Reject"
 
-    rho = "Cor(x, z) ="
+    rho = "Cor(y2, z) ="
     
     p <- ggplot(yuh[[j]], aes(y=StndErr, x=Beta))+geom_point(aes(color= factor(Coverage)), show.legend = ifelse(j==1, TRUE, FALSE))+
       xlim(min(yuh[[j]]$Beta-.01),max(yuh[[j]]$Beta+.01))+
@@ -145,7 +145,7 @@ regressions <- function(datmat, exo=1, instrument=1){
       xlim(-3,3)+
       ylim(-3,3.5)+
       xlab("Beta")+
-      ylab("Rho")+ labs(color = "Endogeneity\nTests") +scale_fill_manual(values = c("#4bfffd", "#030057"))+
+      ylab("Rho")+ labs(color = "Exogeneity\nTests") +scale_fill_manual(values = c("#4bfffd", "#030057"))+
       geom_vline(xintercept = .5)+
       ggtitle(paste(rho, rhoxe[j]))+
       scale_colour_manual(values = c("Reject" = "#74BDCB", "Fail to Reject" = "#FFA384"))+theme_bw()
@@ -155,7 +155,7 @@ regressions <- function(datmat, exo=1, instrument=1){
     p4 <- ggplot(yuh[[j]], aes(x=Beta, y=TStat))+geom_point(aes(color= factor(Endogeneity)),show.legend = FALSE)+
       xlim(-3,3)+
       ylim(0,12)+
-      ylab("T-Stat on Rho")+
+      ylab("T-Statistic, Rho")+
       xlab("Beta")+
       geom_hline(yintercept = 1.96)+
       ggtitle(paste(rho, rhoxe[j]))+
@@ -218,7 +218,7 @@ regressions <- function(datmat, exo=1, instrument=1){
   grid.arrange(grobs= plot3,
                widths = c(4,1.65,4),
                heights= unit(c(1.8,1.8, 1.8), c("in", "in")),
-               top = "Relationship Between Beta and Rho",
+               top = "Relationship Between Beta and Rho in the Control Function Method",
                layout_matrix=rbind(c(1,1, 2), c(3,NA, 4), c(5,NA, 6)))
   dev.off()
   
